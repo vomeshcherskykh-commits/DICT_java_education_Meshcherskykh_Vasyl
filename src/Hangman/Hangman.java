@@ -11,7 +11,7 @@ public class Hangman {
         Random random = new Random();
 
         stage1();
-        stage2mod(scanner, random);
+        stage2mod2(scanner, random);
 
         scanner.close();
     }
@@ -47,4 +47,23 @@ public class Hangman {
             System.out.println("You lost!");
         }
     }
+
+    public static void stage2mod2(Scanner scanner, Random random) {
+
+        String[] words = {"python", "java", "javascript", "kotlin"};
+        String word = words[random.nextInt(words.length)];
+
+        String hint = word.substring(0, 2) + "-".repeat(word.length() - 2);
+
+        System.out.println("HANGMAN");
+        System.out.print("Guess the word " + hint + ": > ");
+        String guess = scanner.nextLine();
+
+        if (word.equals(guess)) {
+            System.out.println("You survived!");
+        } else {
+            System.out.println("You lost!");
+        }
+    }
 }
+
