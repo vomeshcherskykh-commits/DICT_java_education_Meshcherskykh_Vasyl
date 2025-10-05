@@ -1,7 +1,6 @@
 package Hangman;
 
-import java.util.Scanner;
-import java.util.Random;
+import java.util.*;
 
 public class Hangman {
 
@@ -11,7 +10,7 @@ public class Hangman {
         Random random = new Random();
 
         stage1();
-        stage2mod2(scanner, random);
+        stage2mod3(scanner, random);
 
         scanner.close();
     }
@@ -64,6 +63,38 @@ public class Hangman {
         } else {
             System.out.println("You lost!");
         }
+    }
+
+    public static void stage2mod3(Scanner scanner, Random random) {
+
+        String[] words = {"python", "java", "javascript", "kotlin"};
+        String word = words[random.nextInt(words.length)];
+
+        char[] hidden = new char[word.length()];
+        Arrays.fill(hidden, '-');
+
+        for (int attempts = 8; attempts > 0; attempts--) {
+            System.out.println(hidden);
+            System.out.print("Input a letter: > ");
+            char letter = scanner.nextLine().charAt(0);
+
+            boolean found = false;
+            for (int i = 0; i < word.length(); i++) {
+                if (word.charAt(i) == letter) {
+                    hidden[i] = letter;
+                    found = true;
+                }
+            }
+
+            if (!found) {
+                System.out.println("That letter doesn't appear in the word");
+            }
+
+            if (new String(hidden).equals(word)) break;
+        }
+
+        System.out.println("Thanks for playing!");
+        System.out.println("We'll see how well you did in the next stage");
     }
 }
 
