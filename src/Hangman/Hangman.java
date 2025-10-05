@@ -10,7 +10,7 @@ public class Hangman {
         Random random = new Random();
 
         stage1();
-        stage2mod4(scanner, random);
+        stage2mod5(scanner);
 
         scanner.close();
     }
@@ -137,6 +137,59 @@ public class Hangman {
                 return;
             }
         }
+        System.out.println("You lost!");
+    }
+
+    public static void stage2mod5(Scanner scanner) {
+
+        String[] words = {"python", "java", "javascript", "kotlin"};
+        String word = words[new Random().nextInt(words.length)];
+
+        char[] hidden = new char[word.length()];
+        Arrays.fill(hidden, '-');
+
+        int lives = 8;
+
+        while (lives > 0) {
+            System.out.println(hidden);
+            System.out.print("Input a letter: > ");
+            String input = scanner.nextLine();
+
+            if (input.length() != 1) {
+                System.out.println("You should input a single letter");
+                continue;
+            }
+
+            char letter = input.charAt(0);
+            if (letter < 'a' || letter > 'z') {
+                System.out.println("Please enter a lowercase English letter");
+                continue;
+            }
+
+            if (new String(hidden).indexOf(letter) != -1) {
+                System.out.println("You've already guessed this letter");
+                continue;
+            }
+
+            if (word.indexOf(letter) == -1) {
+                System.out.println("That letter doesn't appear in the word");
+                lives--;
+            } else {
+                for (int i = 0; i < word.length(); i++) {
+                    if (word.charAt(i) == letter) {
+                        hidden[i] = letter;
+                    }
+                }
+            }
+
+            if (new String(hidden).equals(word)) {
+                System.out.println(hidden);
+                System.out.println("You guessed the word " + word + "!");
+                System.out.println("You survived!");
+                return;
+            }
+        }
+
         System.out.println("You lost!");
     }
 }
