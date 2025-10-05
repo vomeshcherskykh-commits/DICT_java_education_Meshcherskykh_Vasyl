@@ -10,7 +10,7 @@ public class Hangman {
         Random random = new Random();
 
         stage1();
-        stage2mod3(scanner, random);
+        stage2mod4(scanner, random);
 
         scanner.close();
     }
@@ -95,6 +95,49 @@ public class Hangman {
 
         System.out.println("Thanks for playing!");
         System.out.println("We'll see how well you did in the next stage");
+    }
+
+    public static void stage2mod4(Scanner scanner, Random random) {
+
+        String[] words = {"python", "java", "javascript", "kotlin"};
+        String word = words[random.nextInt(words.length)];
+
+        char[] hidden = new char[word.length()];
+        Arrays.fill(hidden, '-');
+        int lives = 8;
+
+        while (lives > 0) {
+            System.out.println(hidden);
+            System.out.print("Input a letter: > ");
+            String input = scanner.nextLine();
+
+            if (input.length() != 1) continue;
+            char letter = input.charAt(0);
+
+            if (word.indexOf(letter) == -1) {
+                System.out.println("That letter doesn't appear in the word");
+                lives--;
+            }
+            else if (new String(hidden).indexOf(letter) != -1) {
+                System.out.println("No improvements");
+                lives--;
+            }
+            else {
+                for (int i = 0; i < word.length(); i++) {
+                    if (word.charAt(i) == letter) {
+                        hidden[i] = letter;
+                    }
+                }
+            }
+
+            if (new String(hidden).equals(word)) {
+                System.out.println(hidden);
+                System.out.println("You guessed the word!");
+                System.out.println("You survived!");
+                return;
+            }
+        }
+        System.out.println("You lost!");
     }
 }
 
