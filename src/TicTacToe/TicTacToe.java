@@ -4,54 +4,37 @@ import java.util.Scanner;
 
 public class TicTacToe {
     public static void main(String[] args) {
+        Game game = new Game();
+        game.start();
+    }
+}
 
-        Scanner scanner = new Scanner(System.in);
-        char[][] field = {2
-                {'_', '_', '_'},
-                {'_', '_', '_'},
-                {'_', '_', '_'}
-        };
+class Game {
 
-        boolean xTurn = true;
-        printField(field);
+    private final Board board;
+    private final Player playerX;
+    private final Player playerO;
+    private boolean xTurn = true;
+    private final Scanner scanner = new Scanner(System.in);
+
+    public Game() {
+        this.board = new Board();
+        this.playerX = new Player('X');
+        this.playerO = new Player('O');
+    }
+
+    public void start() {
+
+        board.print();
 
         while (true) {
-            int x, y;
-            while (true) {
-                System.out.print("Enter the coordinates: ");
-                String line = scanner.nextLine();
-                String[] parts = line.split(" ");
 
-                if (parts.length != 2) {
-                    System.out.println("You should enter numbers!");
-                    continue;
-                }
+            Player current = xTurn ? playerX : playerO;
+            makeMove(current);
 
-                try {
-                    x = Integer.parseInt(parts[0]);
-                    y = Integer.parseInt(parts[1]);
-                } catch (NumberFormatException e) {
-                    System.out.println("You should enter numbers!");
-                    continue;
-                }
+            board.print();
 
-                if (x < 1 || x > 3 || y < 1 || y > 3) {
-                    System.out.println("Coordinates should be from 1 to 3!");
-                    continue;
-                }
-
-                if (field[x - 1][y - 1] != '_') {
-                    System.out.println("This cell is occupied! Choose another one!");
-                    continue;
-                }
-
-                break;
-            }
-
-            field[x - 1][y - 1] = xTurn ? 'X' : 'O';
-            printField(field);
-
-            String result = analyze(field);
+            String result = board.analyze();
             if (!result.equals("Game not finished")) {
                 System.out.println(result);
                 break;
@@ -61,7 +44,54 @@ public class TicTacToe {
         }
     }
 
-    private static void printField(char[][] field) {
+    private void makeMove(Player player) {
+
+        while (true) {
+
+            System.out.print("Enter the coordinates: ");
+            String input = scanner.nextLine();
+            String[] parts = input.split(" ");
+            if (parts.length != 2) {
+                System.out.println("You should enter numbers!");
+                continue;
+            }
+
+            int x, y;
+            try {
+                x = Integer.parseInt(parts[0]);
+                y = Integer.parseInt(parts[1]);
+            } catch (NumberFormatException e) {
+                System.out.println("You should enter numbers!");
+                continue;
+            }
+
+            if (x < 1 || x > 3 || y < 1 || y > 3) {
+                System.out.println("Coordinates should be from 1 to 3!");
+                continue;
+            }
+
+            if (!board.isCellEmpty(x - 1, y - 1)) {
+                System.out.println("This cell is occupied! Choose another one!");
+                continue;
+            }
+
+            board.setCell(x - 1, y - 1, player.getSymbol());
+            break;
+        }
+    }
+}
+
+class Board {
+
+    private final char[][] field = new char[3][3];
+
+    public Board() {
+        for (int i = 0; i < 3; i++)
+            for (int j = 0; j < 3; j++)
+                field[i][j] = '_';
+    }
+
+    public void print() {
         System.out.println("---------");
         for (int i = 0; i < 3; i++) {
             System.out.print("| ");
@@ -73,28 +103,45 @@ public class TicTacToe {
         System.out.println("---------");
     }
 
-    private static boolean checkWin(char[][] f, char p) {
-
-        for (int i = 0; i < 3; i++) {
-            if (f[i][0] == p && f[i][1] == p && f[i][2] == p) return true;
-            if (f[0][i] == p && f[1][i] == p && f[2][i] == p) return true;
-        }
-        return (f[0][0] == p && f[1][1] == p && f[2][2] == p)
-                || (f[0][2] == p && f[1][1] == p && f[2][0] == p);
+    public boolean isCellEmpty(int x, int y) {
+        return field[x][y] == '_';
     }
 
-    private static String analyze(char[][] f) {
+    public void setCell(int x, int y, char symbol) {
+        field[x][y] = symbol;
+    }
 
-        boolean xWins = checkWin(f, 'X');
-        boolean oWins = checkWin(f, 'O');
-        if (xWins) return "X wins";
-        if (oWins) return "O wins";
+    public String analyze() {
 
-        for (char[] row : f) {
-            for (char c : row) {
+        if (checkWin('X')) return "X wins";
+        if (checkWin('O')) return "O wins";
+
+        for (char[] row : field)
+            for (char c : row)
                 if (c == '_') return "Game not finished";
-            }
-        }
+
         return "Draw";
+    }
+
+    private boolean checkWin(char p) {
+
+        for (int i = 0; i < 3; i++) {
+            if (field[i][0] == p && field[i][1] == p && field[i][2] == p) return true;
+            if (field[0][i] == p && field[1][i] == p && field[2][i] == p) return true;
+        }
+        return (field[0][0] == p && field[1][1] == p && field[2][2] == p) || (field[0][2] == p && field[1][1] == p && field[2][0] == p);
+    }
+}
+
+// ---------------- Клас гравця ----------------
+class Player {
+    private final char symbol;
+
+    public Player(char symbol) {
+        this.symbol = symbol;
+    }
+
+    public char getSymbol() {
+        return symbol;
     }
 }
