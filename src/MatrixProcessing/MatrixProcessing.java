@@ -7,30 +7,19 @@ public class MatrixProcessing {
 
         Scanner sc = new Scanner(System.in);
 
-        int n1 = sc.nextInt();
-        int m1 = sc.nextInt();
-        double[][] a = new double[n1][m1];
-        for (int i = 0; i < n1; i++)
-            for (int j = 0; j < m1; j++)
+        int n = sc.nextInt();
+        int m = sc.nextInt();
+        double[][] a = new double[n][m];
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < m; j++)
                 a[i][j] = sc.nextDouble();
 
-        int n2 = sc.nextInt();
-        int m2 = sc.nextInt();
-        double[][] b = new double[n2][m2];
-        for (int i = 0; i < n2; i++)
-            for (int j = 0; j < m2; j++)
-                b[i][j] = sc.nextDouble();
+        double c = sc.nextDouble();
 
-        if (n1 != n2 || m1 != m2) {
-            System.out.println("ERROR");
-            return;
-        }
-
-        double[][] sum = new double[n1][m1];
-        for (int i = 0; i < n1; i++) {
-            for (int j = 0; j < m1; j++) {
-                sum[i][j] = a[i][j] + b[i][j];
-                System.out.print((sum[i][j] % 1 == 0 ? (int) sum[i][j] : sum[i][j]) + " ");
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                double val = a[i][j] * c;
+                System.out.print((val % 1 == 0 ? (int) val : val) + " ");
             }
             System.out.println();
         }
