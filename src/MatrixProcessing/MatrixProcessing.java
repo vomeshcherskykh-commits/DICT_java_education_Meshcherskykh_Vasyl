@@ -7,28 +7,18 @@ public class MatrixProcessing {
 
         Scanner sc = new Scanner(System.in);
 
-        System.out.println("1. Main diagonal");
-        System.out.println("2. Side diagonal");
-        System.out.println("3. Vertical line");
-        System.out.println("4. Horizontal line");
-        System.out.print("Your choice: > ");
-        int choice = sc.nextInt();
-
         System.out.print("Enter matrix size: > ");
         int n = sc.nextInt(), m = sc.nextInt();
         System.out.println("Enter matrix:");
         double[][] matrix = readMatrix(sc, n, m);
 
-        double[][] result = switch (choice) {
-            case 1 -> transposeMain(matrix);
-            case 2 -> transposeSide(matrix);
-            case 3 -> transposeVertical(matrix);
-            case 4 -> transposeHorizontal(matrix);
-            default -> matrix;
-        };
+        if (n != m) {
+            System.out.println("Matrix must be square.");
+            return;
+        }
 
         System.out.println("The result is:");
-        printMatrix(result);
+        System.out.println((int) determinant(matrix));
     }
 
     static double[][] readMatrix(Scanner sc, int n, int m) {
@@ -39,46 +29,23 @@ public class MatrixProcessing {
         return mat;
     }
 
-    static void printMatrix(double[][] matrix) {
-        for (double[] row : matrix) {
-            for (int j = 0; j < row.length; j++)
-                System.out.print(row[j] + (j == row.length - 1 ? "" : " "));
-            System.out.println();
+    static double determinant(double[][] m) {
+        int n = m.length;
+        if (n == 1) return m[0][0];
+        if (n == 2) return m[0][0]*m[1][1] - m[0][1]*m[1][0];
+
+        double det = 0;
+        for (int k = 0; k < n; k++) {
+            double[][] minor = new double[n - 1][n - 1];
+            for (int i = 1; i < n; i++) {
+                int col = 0;
+                for (int j = 0; j < n; j++) {
+                    if (j == k) continue;
+                    minor[i - 1][col++] = m[i][j];
+                }
+            }
+            det += Math.pow(-1, k) * m[0][k] * determinant(minor);
         }
-    }
-
-    static double[][] transposeMain(double[][] m) {
-        int n = m.length, k = m[0].length;
-        double[][] t = new double[k][n];
-        for (int i = 0; i < n; i++)
-            for (int j = 0; j < k; j++)
-                t[j][i] = m[i][j];
-        return t;
-    }
-
-    static double[][] transposeSide(double[][] m) {
-        int n = m.length, k = m[0].length;
-        double[][] t = new double[k][n];
-        for (int i = 0; i < n; i++)
-            for (int j = 0; j < k; j++)
-                t[k - 1 - j][n - 1 - i] = m[i][j];
-        return t;
-    }
-
-    static double[][] transposeVertical(double[][] m) {
-        int n = m.length, k = m[0].length;
-        double[][] t = new double[n][k];
-        for (int i = 0; i < n; i++)
-            for (int j = 0; j < k; j++)
-                t[i][j] = m[i][k - 1 - j];
-        return t;
-    }
-
-    static double[][] transposeHorizontal(double[][] m) {
-        int n = m.length, k = m[0].length;
-        double[][] t = new double[n][k];
-        for (int i = 0; i < n; i++)
-            t[i] = m[n - 1 - i];
-        return t;
+        return det;
     }
 }
