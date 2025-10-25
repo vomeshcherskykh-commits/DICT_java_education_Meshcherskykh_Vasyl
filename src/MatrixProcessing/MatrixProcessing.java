@@ -17,8 +17,19 @@ public class MatrixProcessing {
             return;
         }
 
+        double det = determinant(matrix);
+        if (Math.abs(det) < 1e-9) {
+            System.out.println("This matrix doesn't have an inverse.");
+            return;
+        }
+
+        double[][] inv = inverse(matrix);
         System.out.println("The result is:");
-        System.out.println((int) determinant(matrix));
+        for (double[] row : inv) {
+            for (int j = 0; j < row.length; j++)
+                System.out.printf("%.2f%s", row[j], j == row.length - 1 ? "" : " ");
+            System.out.println();
+        }
     }
 
     static double[][] readMatrix(Scanner sc, int n, int m) {
@@ -47,5 +58,30 @@ public class MatrixProcessing {
             det += Math.pow(-1, k) * m[0][k] * determinant(minor);
         }
         return det;
+    }
+
+    static double[][] inverse(double[][] a) {
+        int n = a.length;
+        double[][] aug = new double[n][2 * n];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) aug[i][j] = a[i][j];
+            aug[i][n + i] = 1;
+        }
+
+        for (int i = 0; i < n; i++) {
+            double pivot = aug[i][i];
+            for (int j = 0; j < 2 * n; j++) aug[i][j] /= pivot;
+            for (int k = 0; k < n; k++) {
+                if (k == i) continue;
+                double factor = aug[k][i];
+                for (int j = 0; j < 2 * n; j++)
+                    aug[k][j] -= factor * aug[i][j];
+            }
+        }
+
+        double[][] inv = new double[n][n];
+        for (int i = 0; i < n; i++)
+            System.arraycopy(aug[i], n, inv[i], 0, n);
+        return inv;
     }
 }
