@@ -1,42 +1,73 @@
 package CreditCalculator;
 
 import java.util.Scanner;
+import static java.lang.Math.*;
 
 public class CreditCalculator {
     public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
 
-        Scanner scanner = new Scanner(System.in);
+        System.out.println("What do you want to calculate?\ntype \"n\" for number of monthly payments,\ntype \"a\" for annuity monthly payment amount,\ntype \"p\" for loan principal:");
 
-        System.out.println("Enter the loan principal:");
-        int principal = scanner.nextInt();
+        String type = sc.next();
 
-        System.out.println("What do you want to calculate?");
-        System.out.println("type \"m\" – for number of monthly payments,");
-        System.out.println("type \"p\" – for the monthly payment:");
-        String choice = scanner.next();
+        if (type.equals("n")) {
 
-        if (choice.equals("m")) {
+            System.out.println("Enter the loan principal:");
+            double P = sc.nextDouble();
 
             System.out.println("Enter the monthly payment:");
-            int payment = scanner.nextInt();
+            double A = sc.nextDouble();
 
-            int months = (int) Math.ceil((double) principal / payment);
+            System.out.println("Enter the loan interest:");
+            double interest = sc.nextDouble() / 100;
 
-            System.out.println("It will take " + months + " months to repay the loan");
+            double i = interest / 12;
 
-        } else if (choice.equals("p")) {
+            double n = ceil(log(A / (A - i * P)) / log(1 + i));
+            int totalMonths = (int) n;
 
-            System.out.println("Enter the number of months:");
-            int months = scanner.nextInt();
+            int years = totalMonths / 12;
+            int months = totalMonths % 12;
 
-            int payment = (int) Math.ceil((double) principal / months);
-            int lastPayment = principal - (months - 1) * payment;
+            System.out.print("It will take ");
+            if (years > 0) System.out.print(years + " years");
+            if (years > 0 && months > 0) System.out.print(" and ");
+            if (months > 0) System.out.print(months + " months");
+            System.out.println(" to repay this loan!");
 
-            if (payment != lastPayment) {
-                System.out.println("Your monthly payment = " + payment + " and the last payment = " + lastPayment + ".");
-            } else {
-                System.out.println("Your monthly payment = " + payment);
-            }
+        } else if (type.equals("a")) {
+
+            System.out.println("Enter the loan principal:");
+            double P = sc.nextDouble();
+
+            System.out.println("Enter the number of periods:");
+            int n = sc.nextInt();
+
+            System.out.println("Enter the loan interest:");
+            double interest = sc.nextDouble() / 100;
+
+            double i = interest / 12;
+
+            double A = P * (i * pow(1 + i, n)) / (pow(1 + i, n) - 1);
+            System.out.println("Your annuity payment = " + (int) ceil(A) + "!");
+
+        } else if (type.equals("p")) {
+
+            System.out.println("Enter the annuity payment:");
+            double A = sc.nextDouble();
+
+            System.out.println("Enter the number of periods:");
+            int n = sc.nextInt();
+
+            System.out.println("Enter the loan interest:");
+            double interest = sc.nextDouble() / 100;
+
+            double i = interest / 12;
+
+            double P = A / ((i * pow(1 + i, n)) / (pow(1 + i, n) - 1));
+            System.out.println("Your loan principal = " + (int) floor(P) + "!");
+
         }
     }
 }
